@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+var app = require('commander');
+
+app.command('status', 'Prints the current status of the fixtures');
+app.command('up <fixtureName>', 'Sets up a fixture/mock');
+app.command('down <fixtureName>', 'Tears down a fixture/mock');
+
+app.parse(process.argv);

@@ -1,0 +1,28 @@
+#! /usr/bin/env node
+
+var app = require('commander'),
+	path = require('path'),
+	State = require('../lib/state');
+
+app.option('-c --chdir <dir>', 'Change root dir');
+app.parse(process.argv);
+
+// Set the root dir
+if (app.chdir) {
+	process.chdir(app.chdir);
+}
+
+// Load the state
+var state = new State(path.join(process.cwd(), 'mokr', '.mokr'));
+state.load(function(err) {
+	if (err) {
+		console.error(err);
+	}
+
+	for (var i in state.fixtures) {
+		console.log(i + ': ' + (state.fixtures[i].hasRun ? 'Run' : 'Not Run'));
+	}
+
+	// Re-save
+	state.save();
+});

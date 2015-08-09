@@ -1,0 +1,45 @@
+#! /usr/bin/env node
+
+var app = require('commander'),
+	path = require('path'),
+	State = require('../lib/state'),
+	each = require('each-async');
+
+app.option('-c --chdir <dir>', 'Change root dir');
+app.option('-f --force', 'Force run the fixture');
+app.parse(process.argv);
+
+// Set the root dir
+if (app.chdir) {
+	process.chdir(app.chdir);
+}
+
+// Load the state
+var state = new State(path.join(process.cwd(), 'mokr', '.mokr'));
+state.load(function(err) {
+	if (err) {
+		console.error(err);
+	}
+
+	each(app.args, function(name, i, done) {
+		if (!state.fixtures[name]) {
+			return done(new Error('No such fixture: ' + name));
+		}
+
+		if (state.fixtures[name].hasRun && !app.force) {
+			return done(new Error('Cowardly refusing to re-run fixture. Use --force to override.'));
+		}
+
+		// Run up
+		state.runUp(name, done);
+	}, function(err) {
+		// Save no matter what
+		state.save(function() {
+			// Log error
+			if (err) {
+				console.error(err);
+				process.exit(1);
+			}
+		});
+	});
+});
