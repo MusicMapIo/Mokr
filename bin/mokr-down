@@ -1,11 +1,13 @@
 #! /usr/bin/env node
 
 var app = require('commander'),
+	Logger = require('../lib/logger'),
 	path = require('path'),
 	State = require('../lib/state'),
 	each = require('each-async');
 
-app.option('-c --chdir <dir>', 'Change root dir');
+app.option('-d --debug', 'Set the log level to debug');
+app.option('-c --chdir <dir>', 'Change the current working directory');
 app.option('-f --force', 'Force run the fixture');
 app.parse(process.argv);
 
@@ -14,27 +16,46 @@ if (app.chdir) {
 	process.chdir(app.chdir);
 }
 
+// Setup logger
+var logger = Logger(app);
+var cwd = process.cwd();
+logger.debug('cwd: ' + cwd);
+logger.debug('force: ' + !!app.force);
+
 // Load the state
-var state = new State(path.join(process.cwd(), 'mokr', '.mokr'));
+var stateFile = path.join(cwd, 'mokr', '.mokr');
+logger.debug('state file: ' + stateFile);
+var state = new State(stateFile);
 state.load(function(err) {
 	if (err) {
-		console.error(err);
+		logger.error(err);
 	}
 
 	each(app.args, function(name, i, done) {
 		if (!state.fixtures[name]) {
-			return done(new Error('No such fixture: ' + name));
+			logger.error('No such fixture: ' + name);
+			return done();
 		}
 
 		if (!state.fixtures[name].hasRun && !app.force) {
-			return done(new Error('Cowardly refusing to tear down fixture. Use --force to override.'));
+			logger.warning('Cowardly refusing to tear down ' + name + '. Use --force to override.');
+			return done();
 		}
 
 		// Run up
-		state.runDown(name, done);
+		logger.notice('Tearing down fixture: ' + name);
+		state.runDown(name, function(err) {
+			if (err) {
+				logger.error('Fixture failed to tear down!');
+				return logger.error(err);
+			}
+			done();
+		});
 	}, function(err) {
 		// Save no matter what
+		logger.debug('saving state');
 		state.save(function() {
+			logger.debug('state saved');
 			// Log error
 			if (err) {
 				console.error(err);

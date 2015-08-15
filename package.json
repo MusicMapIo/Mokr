@@ -22,8 +22,10 @@
   },
   "homepage": "https://github.com/MusicMapIo/Mokr",
   "dependencies": {
+    "chalk": "^1.1.0",
     "commander": "^2.8.1",
-    "each-async": "^1.1.1"
+    "each-async": "^1.1.1",
+    "loggerr": "^1.3.2"
   },
   "devDependencies": {
     "async-foreach": "^0.1.3",
