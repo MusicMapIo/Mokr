@@ -47,7 +47,13 @@ state.load(function(err) {
 		state.runDown(name, function(err) {
 			if (err) {
 				logger.error('Fixture failed to tear down!');
-				return logger.error(err);
+				if (err instanceof Array) {
+					return err.forEach(function(e) {
+						logger.error(e);
+					});
+				} else {
+					return logger.error(err);
+				}
 			}
 			done();
 		});
