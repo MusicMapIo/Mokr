@@ -1,6 +1,6 @@
 {
   "name": "mokr",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A fixture/mock data framework",
   "main": "index.js",
   "scripts": {
