@@ -6,6 +6,14 @@
   "scripts": {
     "test": "mocha"
   },
+  "bin": {
+    "mokr": "./bin/mokr",
+    "mokr-create": "./bin/mokr-create",
+    "mokr-down": "./bin/mokr-down",
+    "mokr-init": "./bin/mokr-init",
+    "mokr-status": "./bin/mokr-status",
+    "mokr-up": "./bin/mokr-up"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:MusicMapIo/Mokr.git"
@@ -25,6 +33,7 @@
     "chalk": "^1.1.0",
     "commander": "^2.8.1",
     "each-async": "^1.1.1",
+    "init-package-json": "^1.8.0",
     "loggerr": "^1.3.2"
   },
   "devDependencies": {

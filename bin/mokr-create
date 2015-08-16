@@ -64,7 +64,7 @@ state.load(function(err) {
 	logger.notice('Writing fixture ' + fixturePath);
 	fs.writeFileSync(fixturePath, fixtureTmpl);
 
-	var dataPath = path.join('mokr', 'fixtures', name + '.js');
+	var dataPath = path.join('mokr', 'data', name + '.js');
 	logger.notice('Writing data ' + dataPath);
 	fs.writeFileSync(dataPath, dataTmpl);
 
