@@ -1,0 +1,76 @@
+#! /usr/bin/env node
+
+var app = require('commander'),
+	fs = require('fs'),
+	Logger = require('../lib/logger'),
+	path = require('path'),
+	chalk = require('chalk'),
+	State = require('../lib/state');
+
+app.option('-d --debug', 'Set the log level to debug');
+app.option('-c --chdir <dir>', 'Change the current working directory');
+app.parse(process.argv);
+
+// Set the root dir
+if (app.chdir) {
+	process.chdir(app.chdir);
+}
+
+// Setup logger
+var logger = Logger(app);
+var cwd = process.cwd();
+logger.debug('cwd: ' + cwd);
+
+var name;
+if (app.args.length === 1) {
+	name = app.args[0];
+} else {
+	logger.error('Cannot create more than one fixture at a time.');
+	process.exit(1);
+}
+
+var fixtureTmpl = [
+  'var data = require(\'../data/' + name + '\');',
+  '',
+  'module.exports.up = function(next) {',
+  '	next();',
+  '};',
+  '',
+  'module.exports.down = function(next) {',
+  '	next();',
+  '};',
+  ''
+].join('\n');
+
+var dataTmpl = [
+  'var faker = require(\'faker\');',
+  '',
+  'module.exports = [',
+  '	',
+  '];',
+  ''
+].join('\n');
+
+// Load the state
+var stateFile = path.join(cwd, 'mokr', '.mokr');
+logger.debug('state file: ' + stateFile);
+var state = new State(stateFile);
+state.load(function(err) {
+	if (err) {
+		// Suppress this error here because the state file shouldnt exist
+	}
+
+	var fixturePath = path.join('mokr', 'fixtures', name + '.js');
+	logger.notice('Writing fixture ' + fixturePath);
+	fs.writeFileSync(fixturePath, fixtureTmpl);
+
+	var dataPath = path.join('mokr', 'fixtures', name + '.js');
+	logger.notice('Writing data ' + dataPath);
+	fs.writeFileSync(dataPath, dataTmpl);
+
+	// Resave the state
+	state.add(name);
+	state.save();
+
+	logger.notice('Fixture is ready to run: mokr up ' + name);
+});

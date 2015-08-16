@@ -1,0 +1,57 @@
+#! /usr/bin/env node
+
+var app = require('commander'),
+	fs = require('fs'),
+	Logger = require('../lib/logger'),
+	path = require('path'),
+	chalk = require('chalk'),
+	State = require('../lib/state');
+
+app.option('-d --debug', 'Set the log level to debug');
+app.option('-c --chdir <dir>', 'Change the current working directory');
+app.parse(process.argv);
+
+// Set the root dir
+if (app.chdir) {
+	process.chdir(app.chdir);
+}
+
+// Setup logger
+var logger = Logger(app);
+var cwd = process.cwd();
+logger.debug('cwd: ' + cwd);
+
+// Load the state
+var stateFile = path.join(cwd, 'mokr', '.mokr');
+logger.debug('state file: ' + stateFile);
+var state = new State(stateFile);
+state.load(function(err) {
+	if (err) {
+		// Suppress this error here because the state file shouldnt exist
+	}
+
+	logger.notice(chalk.white('Creating ./mokr'));
+	fs.mkdir('./mokr', function(err) {
+		if (err) {
+			return logger.error(err);
+		}
+
+		logger.notice(chalk.white('Creating ./mokr/data'));
+		fs.mkdir('./mokr/data', function(err) {
+			if (err) {
+				return logger.error(err);
+			}
+
+			logger.notice(chalk.white('Creating ./mokr/fixtures'));
+			fs.mkdir('./mokr/fixtures', function(err) {
+				if (err) {
+					return logger.error(err);
+				}
+				// Save state
+				state.save();
+				logger.notice('Moker is ready to go!');
+				logger.notice('Now run `mokr create <name>` to strea a fixture.');
+			});
+		});
+	});
+});
