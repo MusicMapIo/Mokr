@@ -30,10 +30,10 @@ state.load(function(err) {
 		console.error(err);
 	}
 
-	logger.notice(chalk.cyan('\nFixture Status:\n=====================\n'));
+	logger.notice(chalk.white('\nFixture Status\n' + chalk.grey('=====================') + '\n'));
 
 	for (var i in state.fixtures) {
-		logger.notice(chalk.white(chalk.bold(i) + ': ') + (state.fixtures[i].hasRun ? chalk.green('Run') : chalk.red('Not Run')));
+		logger.notice((state.fixtures[i].hasRun ? chalk.green('✔') : chalk.red('✘')) + '  ' + chalk.white.bold(i));
 	}
 
 	// Re-save
