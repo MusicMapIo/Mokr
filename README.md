@@ -32,7 +32,7 @@ To use the fixtures you have setup all you have to do is run them:
 $ mokr up my-awesome-fixture
 ```
 
-This will run through the fixtures of the given name[s].  To see which fixtrues have been run you can always check the fixture status with:
+This will run through the fixtures of the given name(s).  To see which fixtrues have been run you can always check the fixture status with:
 
 ```
 $ mokr status
@@ -43,8 +43,38 @@ Fixture Status:
 my-awesome-fixture: Run
 ```
 
-
 You can tear down a fixture with the `down` command.
+
+## Dependencies
+
+You can declare dependencies between your fixtures with the `dependsOn` key in the fixture exports.  This means that Mokr will ensure that the proper fixtures will be run first, thus giving you access to their state.
+
+Here is an example of using dependencies to create posts for users created in a `users` fixture:
+
+```javascript
+var data = require('../data/posts'),
+	request = require('request');
+
+module.exports.dependsOn = ['users'];
+
+module.exports.up = function() {
+	data.forEach(function(post) {
+		request({
+			method: 'POST',
+			url: 'http://localhost:1234/api/posts'<
+			json: true,
+			body: {
+				// users.state is the user state setup in the users fixtures
+				user: this.dependencies.users.state[0].id,
+				post: post
+			}
+		}, function() {
+			
+		}.bind(this));
+	}.bind(this));
+};
+
+```
 
 ## Keeping State
 

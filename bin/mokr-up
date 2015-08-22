@@ -44,7 +44,6 @@ state.load(function(err) {
 		}
 
 		// Run up
-		logger.notice('Setting up fixture: ' + name);
 		state.runUp(name, function(err) {
 			if (err) {
 				logger.error('Fixture failed!');

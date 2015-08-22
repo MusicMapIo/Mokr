@@ -43,7 +43,6 @@ state.load(function(err) {
 		}
 
 		// Run up
-		logger.notice('Tearing down fixture: ' + name);
 		state.runDown(name, function(err) {
 			if (err) {
 				logger.error('Fixture failed to tear down!');

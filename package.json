@@ -1,6 +1,6 @@
 {
   "name": "mokr",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A fixture/mock data framework",
   "main": "index.js",
   "scripts": {
@@ -34,7 +34,8 @@
     "commander": "^2.8.1",
     "each-async": "^1.1.1",
     "init-package-json": "^1.8.0",
-    "loggerr": "^1.3.2"
+    "loggerr": "^1.3.2",
+    "run-series": "^1.1.2"
   },
   "devDependencies": {
     "async-foreach": "^0.1.3",
