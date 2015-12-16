@@ -76,9 +76,13 @@ function createMokrStuff() {
 						return logger.error(err);
 					}
 					// Save state
-					state.save();
-					logger.notice('Moker is ready to go!');
-					logger.notice('Now run `mokr create <name>` to strea a fixture.');
+					state.save(function(err) {
+						if (err) {
+							return logger.error(err);
+						}
+						logger.notice('Moker is ready to go!');
+						logger.notice('Now run `mokr create <name>` to strea a fixture.');
+					});
 				});
 			});
 		});

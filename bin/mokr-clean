@@ -1,0 +1,38 @@
+#! /usr/bin/env node
+
+var app = require('commander'),
+	fs = require('fs'),
+	Logger = require('../lib/logger'),
+	path = require('path'),
+	chalk = require('chalk'),
+	State = require('../lib/state');
+
+app.option('-d --debug', 'Set the log level to debug');
+app.option('-c --chdir <dir>', 'Change the current working directory');
+app.parse(process.argv);
+
+// Set the root dir
+if (app.chdir) {
+	process.chdir(app.chdir);
+}
+
+// Setup logger
+var logger = Logger(app);
+var cwd = process.cwd();
+logger.debug('cwd: ' + cwd);
+
+var stateFile = path.join(cwd, 'mokr', '.mokr');
+logger.debug('state file: ' + stateFile);
+var state = new State(stateFile);
+
+fs.unlink(stateFile, function(err) {
+	if (err) {
+		return logger.error(err);
+	}
+	state.save(function(err) {
+		if (err) {
+			return logger.error(err);
+		}
+		logger.notice('Moker status has been cleaned');
+	});
+});

@@ -7,5 +7,6 @@ app.command('init', 'Sets up the mokr file structure');
 app.command('create <fixtureName>', 'Creates a mokr fixture');
 app.command('up <fixtureName>', 'Sets up a fixture/mock');
 app.command('down <fixtureName>', 'Tears down a fixture/mock');
+app.command('clean', 'Clears out fixture status');
 
 app.parse(process.argv);
