@@ -42,7 +42,7 @@ state.load(function(err) {
 			return done();
 		}
 
-		// Run up
+		// Run down
 		state.runDown(name, function(err) {
 			if (err) {
 				logger.error('Fixture failed to tear down!');
