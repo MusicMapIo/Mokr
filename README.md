@@ -61,7 +61,7 @@ module.exports.up = function() {
 	data.forEach(function(post) {
 		request({
 			method: 'POST',
-			url: 'http://localhost:1234/api/posts'<
+			url: 'http://localhost:1234/api/posts',
 			json: true,
 			body: {
 				// users.state is the user state setup in the users fixtures
