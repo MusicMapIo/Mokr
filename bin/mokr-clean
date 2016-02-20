@@ -33,6 +33,6 @@ fs.unlink(stateFile, function(err) {
 		if (err) {
 			return logger.error(err);
 		}
-		logger.notice('Moker status has been cleaned');
+		logger.notice('Mokr status has been cleaned');
 	});
 });
