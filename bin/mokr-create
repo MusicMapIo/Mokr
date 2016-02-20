@@ -32,11 +32,11 @@ if (app.args.length === 1) {
 var fixtureTmpl = [
   'var data = require(\'../data/' + name + '\');',
   '',
-  'module.exports.up = function(next) {',
+  'module.exports.up = function (next) {',
   '	next();',
   '};',
   '',
-  'module.exports.down = function(next) {',
+  'module.exports.down = function (next) {',
   '	next();',
   '};',
   ''

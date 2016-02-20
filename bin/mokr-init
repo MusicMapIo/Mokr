@@ -48,7 +48,7 @@ state.load(function(err) {
 });
 
 function createMokrStuff() {
-	
+
 	logger.notice('Installing faker');
 	exec('npm install --save faker', {
 		cwd: cwd
@@ -57,7 +57,7 @@ function createMokrStuff() {
 			logger.notice(stdout);
 			logger.error(err);
 		}
-		
+
 		logger.notice(chalk.white('Creating ./mokr'));
 		fs.mkdir('./mokr', function(err) {
 			if (err) {
@@ -80,7 +80,7 @@ function createMokrStuff() {
 						if (err) {
 							return logger.error(err);
 						}
-						logger.notice('Moker is ready to go!');
+						logger.notice('Mokr is ready to go!');
 						logger.notice('Now run `mokr create <name>` to strea a fixture.');
 					});
 				});
