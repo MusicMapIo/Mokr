@@ -16,13 +16,13 @@ This will give you the mokr cli tools which can scaffold out and create your fir
 $ mokr init
 ```
 
-This will setup the fixtures and data directories, as well as install [Faker](https://github.com/Marak/faker.js) which is a helpful tool for generating fake data for your fixtures.  Now that the directories are in place you can greate your first fixture:
+This will setup the fixtures and data directories, as well as install [Faker](https://github.com/Marak/faker.js) which is a helpful tool for generating fake data for your fixtures.  Now that the directories are in place you can create your first fixture:
 
 ```
 $ mokr create my-awesome-fixture
 ```
 
-This will create two files for you, `./mokr/fixtures/my-awesome-fixture.js` and `./mokr/data/my-awesome-fixture.js`.  The file in data is where your mock data should live.  This is stored separatly from the fixture itself to allow for reuse across other fixtures, there is no need to use this file if you alreay have the mock data you need.  The fixture file should export `up` and `down` methods which should implement setup and teardown logic.
+This will create two files for you, `./mokr/fixtures/my-awesome-fixture.js` and `./mokr/data/my-awesome-fixture.js`.  The file in data is where your mock data should live.  This is stored separately from the fixture itself to allow for reuse across other fixtures, there is no need to use this file if you already have the mock data you need.  The fixture file should export `up` and `down` methods which should implement setup and teardown logic.
 
 ## Using Your Fixtures
 
@@ -32,7 +32,7 @@ To use the fixtures you have setup all you have to do is run them:
 $ mokr up my-awesome-fixture
 ```
 
-This will run through the fixtures of the given name(s).  To see which fixtrues have been run you can always check the fixture status with:
+This will run through the fixtures of the given name(s).  To see which fixtures have been run you can always check the fixture status with:
 
 ```
 $ mokr status
@@ -69,7 +69,7 @@ module.exports.up = function() {
 				post: post
 			}
 		}, function() {
-			
+
 		}.bind(this));
 	}.bind(this));
 };
