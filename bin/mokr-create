@@ -75,7 +75,6 @@ state.load(function(err) {
 	} else {
 		logger.notice('Data ' + dataPath + ' already exists');
 	}
-	fs.writeFileSync(dataPath, dataTmpl);
 
 	// Resave the state
 	state.add(name);
