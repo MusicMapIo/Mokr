@@ -1,10 +1,10 @@
 #! /usr/bin/env node
 
-var app = require('commander'),
-	Logger = require('../lib/logger'),
-	path = require('path'),
-	chalk = require('chalk'),
-	State = require('../lib/state');
+var app = require('commander');
+var Logger = require('../lib/logger');
+var path = require('path');
+var chalk = require('chalk');
+var State = require('../lib/state');
 
 app.option('-d --debug', 'Set the log level to debug');
 app.option('-c --chdir <dir>', 'Change the current working directory');
@@ -25,7 +25,7 @@ logger.debug('force: ' + !!app.force);
 var stateFile = path.join(cwd, 'mokr', '.mokr');
 logger.debug('state file: ' + stateFile);
 var state = new State(stateFile);
-state.load(function(err) {
+state.load(function (err) {
 	if (err) {
 		console.error(err);
 	}

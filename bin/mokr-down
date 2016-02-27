@@ -1,10 +1,10 @@
 #! /usr/bin/env node
 
-var app = require('commander'),
-	Logger = require('../lib/logger'),
-	path = require('path'),
-	State = require('../lib/state'),
-	each = require('each-async');
+var app = require('commander');
+var Logger = require('../lib/logger');
+var path = require('path');
+var State = require('../lib/state');
+var each = require('each-async');
 
 app.option('-d --debug', 'Set the log level to debug');
 app.option('-c --chdir <dir>', 'Change the current working directory');
@@ -26,12 +26,12 @@ logger.debug('force: ' + !!app.force);
 var stateFile = path.join(cwd, 'mokr', '.mokr');
 logger.debug('state file: ' + stateFile);
 var state = new State(stateFile);
-state.load(function(err) {
+state.load(function (err) {
 	if (err) {
 		logger.error(err);
 	}
 
-	each(app.args, function(name, i, done) {
+	each(app.args, function (name, i, done) {
 		if (!state.fixtures[name]) {
 			logger.error('No such fixture: ' + name);
 			return done();
@@ -43,11 +43,11 @@ state.load(function(err) {
 		}
 
 		// Run down
-		state.runDown(name, function(err) {
+		state.runDown(name, function (err) {
 			if (err) {
 				logger.error('Fixture failed to tear down!');
 				if (err instanceof Array) {
-					return err.forEach(function(e) {
+					return err.forEach(function (e) {
 						logger.error(e);
 					});
 				} else {
@@ -56,10 +56,10 @@ state.load(function(err) {
 			}
 			done();
 		});
-	}, function(err) {
+	}, function (err) {
 		// Save no matter what
 		logger.debug('saving state');
-		state.save(function() {
+		state.save(function () {
 			logger.debug('state saved');
 			// Log error
 			if (err) {

@@ -1,11 +1,11 @@
 #! /usr/bin/env node
 
-var app = require('commander'),
-	fs = require('fs'),
-	Logger = require('../lib/logger'),
-	path = require('path'),
-	chalk = require('chalk'),
-	State = require('../lib/state');
+var app = require('commander');
+var fs = require('fs');
+var Logger = require('../lib/logger');
+var path = require('path');
+var chalk = require('chalk');
+var State = require('../lib/state');
 
 app.option('-d --debug', 'Set the log level to debug');
 app.option('-c --chdir <dir>', 'Change the current working directory');
@@ -30,32 +30,32 @@ if (app.args.length === 1) {
 }
 
 var fixtureTmpl = [
-  'var data = require(\'../data/' + name + '\');',
-  '',
-  'module.exports.up = function (next) {',
-  '	next();',
-  '};',
-  '',
-  'module.exports.down = function (next) {',
-  '	next();',
-  '};',
-  ''
+	'var data = require(\'../data/' + name + '\');',
+	'',
+	'module.exports.up = function (next) {',
+	'	next();',
+	'};',
+	'',
+	'module.exports.down = function (next) {',
+	'	next();',
+	'};',
+	''
 ].join('\n');
 
 var dataTmpl = [
-  'var faker = require(\'faker\');',
-  '',
-  'module.exports = [',
-  '	',
-  '];',
-  ''
+	'var faker = require(\'faker\');',
+	'',
+	'module.exports = [',
+	'	',
+	'];',
+	''
 ].join('\n');
 
 // Load the state
 var stateFile = path.join(cwd, 'mokr', '.mokr');
 logger.debug('state file: ' + stateFile);
 var state = new State(stateFile);
-state.load(function(err) {
+state.load(function (err) {
 	if (err) {
 		// Suppress this error here because the state file shouldnt exist
 	}

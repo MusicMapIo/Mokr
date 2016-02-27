@@ -1,5 +1,14 @@
 # Mokr - A data fixture and mock framework
 
+[![NPM Version][npm-image]][npm-url]
+[![NPM Downloads][downloads-image]][downloads-url]
+[![js-happiness-style](https://img.shields.io/badge/code%20style-happiness-brightgreen.svg)](https://github.com/JedWatson/happiness)
+
+[npm-image]: https://img.shields.io/npm/v/mokr.svg
+[npm-url]: https://npmjs.org/package/mokr
+[downloads-image]: https://img.shields.io/npm/dm/mokr.svg
+[downloads-url]: https://npmjs.org/package/mokr
+
 Mokr is a CLI tool for creating and running mock data sets.  These mocks can be for unit testing or feature development.
 
 ## Setup

@@ -1,13 +1,13 @@
 #! /usr/bin/env node
 
-var app = require('commander'),
-	fs = require('fs'),
-	Logger = require('../lib/logger'),
-	path = require('path'),
-	chalk = require('chalk'),
-	exec = require('child_process').exec,
-	initPackage = require('init-package-json'),
-	State = require('../lib/state');
+var app = require('commander');
+var fs = require('fs');
+var Logger = require('../lib/logger');
+var path = require('path');
+var chalk = require('chalk');
+var exec = require('child_process').exec;
+var initPackage = require('init-package-json');
+var State = require('../lib/state');
 
 app.option('-d --debug', 'Set the log level to debug');
 app.option('-c --chdir <dir>', 'Change the current working directory');
@@ -27,15 +27,15 @@ logger.debug('cwd: ' + cwd);
 var stateFile = path.join(cwd, 'mokr', '.mokr');
 logger.debug('state file: ' + stateFile);
 var state = new State(stateFile);
-state.load(function(err) {
+state.load(function (err) {
 	if (err) {
 		// Suppress this error here because the state file shouldnt exist
 	}
 
-	fs.exists('./package.json', function(exists) {
+	fs.exists('./package.json', function (exists) {
 		if (!exists) {
 			logger.notice('No package.json, running npm init');
-			initPackage(cwd, path.resolve(process.env.HOME, '.npm-init'), {}, function(err, data) {
+			initPackage(cwd, path.resolve(process.env.HOME, '.npm-init'), {}, function (err, data) {
 				if (err) {
 					logger.error(err);
 				}
@@ -52,31 +52,31 @@ function createMokrStuff() {
 	logger.notice('Installing faker');
 	exec('npm install --save faker', {
 		cwd: cwd
-	}, function(err, stdout, stderr) {
+	}, function (err, stdout, stderr) {
 		if (err) {
 			logger.notice(stdout);
 			logger.error(err);
 		}
 
 		logger.notice(chalk.white('Creating ./mokr'));
-		fs.mkdir('./mokr', function(err) {
+		fs.mkdir('./mokr', function (err) {
 			if (err) {
 				return logger.error(err);
 			}
 
 			logger.notice(chalk.white('Creating ./mokr/data'));
-			fs.mkdir('./mokr/data', function(err) {
+			fs.mkdir('./mokr/data', function (err) {
 				if (err) {
 					return logger.error(err);
 				}
 
 				logger.notice(chalk.white('Creating ./mokr/fixtures'));
-				fs.mkdir('./mokr/fixtures', function(err) {
+				fs.mkdir('./mokr/fixtures', function (err) {
 					if (err) {
 						return logger.error(err);
 					}
 					// Save state
-					state.save(function(err) {
+					state.save(function (err) {
 						if (err) {
 							return logger.error(err);
 						}
