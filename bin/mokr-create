@@ -62,11 +62,19 @@ state.load(function(err) {
 
 	var fixturePath = path.join('mokr', 'fixtures', name + '.js');
 	logger.notice('Writing fixture ' + fixturePath);
-	fs.writeFileSync(fixturePath, fixtureTmpl);
+	if (!fs.existsSync(fixturePath)) {
+		fs.writeFileSync(fixturePath, fixtureTmpl);
+	} else {
+		logger.notice('Fixture ' + fixturePath + ' already exists');
+	}
 
 	var dataPath = path.join('mokr', 'data', name + '.js');
 	logger.notice('Writing data ' + dataPath);
-	fs.writeFileSync(dataPath, dataTmpl);
+	if (!fs.existsSync(dataPath)) {
+		fs.writeFileSync(dataPath, dataTmpl);
+	} else {
+		logger.notice('Data ' + dataPath + ' already exists');
+	}
 
 	// Resave the state
 	state.add(name);
