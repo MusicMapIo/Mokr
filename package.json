@@ -42,7 +42,7 @@
     "body-parser": "^1.13.3",
     "express": "^4.13.3",
     "faker": "^3.0.1",
-    "happiness": "^5.5.0",
+    "happiness": "^7.1.2",
     "lodash.range": "^3.0.1",
     "request": "^2.60.0"
   }

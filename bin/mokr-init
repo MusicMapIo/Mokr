@@ -7,7 +7,7 @@ var path = require('path');
 var chalk = require('chalk');
 var exec = require('child_process').exec;
 var initPackage = require('init-package-json');
-var State = require('../lib/state');
+var loadState = require('../lib/load-state');
 
 app.option('-d --debug', 'Set the log level to debug');
 app.option('-c --chdir <dir>', 'Change the current working directory');
@@ -24,10 +24,7 @@ var cwd = process.cwd();
 logger.debug('cwd: ' + cwd);
 
 // Load the state
-var stateFile = path.join(cwd, 'mokr', '.mokr');
-logger.debug('state file: ' + stateFile);
-var state = new State(stateFile);
-state.load(function (err) {
+loadState(cwd, function (err, state) {
 	if (err) {
 		// Suppress this error here because the state file shouldnt exist
 	}
@@ -39,16 +36,15 @@ state.load(function (err) {
 				if (err) {
 					logger.error(err);
 				}
-				createMokrStuff();
+				createMokrStuff(state);
 			});
 			return;
 		}
-		createMokrStuff();
+		createMokrStuff(state);
 	});
 });
 
-function createMokrStuff() {
-
+function createMokrStuff (state) {
 	logger.notice('Installing faker');
 	exec('npm install --save faker', {
 		cwd: cwd
