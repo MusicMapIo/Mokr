@@ -7,6 +7,7 @@ var path = require('path');
 var chalk = require('chalk');
 var exec = require('child_process').exec;
 var initPackage = require('init-package-json');
+var mkdirp = require('mkdirp');
 var loadState = require('../lib/load-state');
 
 app.option('-d --debug', 'Set the log level to debug');
@@ -55,19 +56,19 @@ function createMokrStuff (state) {
 		}
 
 		logger.notice(chalk.white('Creating ./mokr'));
-		fs.mkdir('./mokr', function (err) {
+		mkdirp('./mokr', function (err) {
 			if (err) {
 				return logger.error(err);
 			}
 
 			logger.notice(chalk.white('Creating ./mokr/data'));
-			fs.mkdir('./mokr/data', function (err) {
+			mkdirp('./mokr/data', function (err) {
 				if (err) {
 					return logger.error(err);
 				}
 
 				logger.notice(chalk.white('Creating ./mokr/fixtures'));
-				fs.mkdir('./mokr/fixtures', function (err) {
+				mkdirp('./mokr/fixtures', function (err) {
 					if (err) {
 						return logger.error(err);
 					}
