@@ -2,8 +2,11 @@
 
 var app = require('commander');
 var Logger = require('../lib/logger');
-var path = require('path');
+var paths = require('../lib/paths');
 var loadState = require('../lib/load-state');
+var State = require('../lib/state');
+var saveState = require('../lib/save-state');
+var runDown = require('../lib/run-down');
 var each = require('each-async');
 
 app.option('-d --debug', 'Set the log level to debug');
@@ -22,27 +25,26 @@ var cwd = process.cwd();
 logger.debug('cwd: ' + cwd);
 logger.debug('force: ' + !!app.force);
 
-// Load the state
-loadState(cwd, function (err, state) {
-	if (err) {
-		logger.error(err);
-	}
+var mokrPaths = paths(cwd);
 
+var state = new State();
+loadState(state, mokrPaths.stateFile, function (err) {
+	if (err) {
+		return logger.error(err);
+	}
 	each(app.args, function (name, i, done) {
 		if (!state.fixtures[name]) {
-			logger.error('No such fixture: ' + name);
-			return done();
+			return logger.error('No such fixture: ' + name);
 		}
 
 		if (!state.fixtures[name].hasRun && !app.force) {
-			logger.warning('Cowardly refusing to tear down ' + name + '. Use --force to override.');
-			return done();
+			return logger.warning('Cowardly refusing to tear down ' + name + '. Use --force to override.');
 		}
 
 		// Run down
-		state.runDown(name, function (err) {
+		runDown(state, name, function (err) {
 			if (err) {
-				logger.error('Fixture failed to tear down!');
+				logger.error('Fixture failed to tear down');
 				if (err instanceof Array) {
 					return err.forEach(function (e) {
 						logger.error(e);
@@ -54,15 +56,16 @@ loadState(cwd, function (err, state) {
 			done();
 		});
 	}, function (err) {
+		if (err) {
+			// Ignore errors, already logged
+		}
+
 		// Save no matter what
-		logger.debug('saving state');
-		state.save(function () {
-			logger.debug('state saved');
-			// Log error
+		saveState(state, mokrPaths.stateFile, function (err) {
 			if (err) {
-				console.error(err);
-				process.exit(1);
+				return logger.error(err);
 			}
+			logger.notice('Fixture successfully torn down!');
 		});
 	});
 });

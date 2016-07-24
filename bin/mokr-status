@@ -2,8 +2,9 @@
 
 var app = require('commander');
 var Logger = require('../lib/logger');
-var path = require('path');
 var chalk = require('chalk');
+var paths = require('../lib/paths');
+var State = require('../lib/state');
 var loadState = require('../lib/load-state');
 
 app.option('-d --debug', 'Set the log level to debug');
@@ -21,18 +22,22 @@ var cwd = process.cwd();
 logger.debug('cwd: ' + cwd);
 logger.debug('force: ' + !!app.force);
 
+var mokrPaths = paths(cwd);
+
 // Load the state
-loadState(cwd, function (err, state) {
+var state = new State();
+loadState(state, mokrPaths.stateFile, function (err) {
 	if (err) {
 		return logger.error(err);
 	}
 
 	logger.notice(chalk.white('\nFixture Status\n' + chalk.grey('=====================') + '\n'));
 
+	if (!Object.keys(state.fixtures).length) {
+		logger.notice('No fixtures setup yet.');
+	}
+
 	for (var i in state.fixtures) {
 		logger.notice((state.fixtures[i].hasRun ? chalk.green('✔') : chalk.red('✘')) + '  ' + chalk.white.bold(i));
 	}
-
-	// Re-save
-	state.save();
 });

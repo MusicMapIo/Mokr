@@ -4,7 +4,7 @@
   "description": "A fixture/mock data framework",
   "main": "index.js",
   "scripts": {
-    "test": "happiness && mocha"
+    "test": "happiness && happiness ./bin/* && mocha"
   },
   "bin": {
     "mokr": "./bin/mokr",
@@ -34,6 +34,7 @@
     "commander": "^2.8.1",
     "each-async": "^1.1.1",
     "init-package-json": "^1.8.0",
+    "inquirer": "^1.1.2",
     "loggerr": "^1.3.2",
     "mkdirp": "^0.5.1",
     "run-series": "^1.1.2"
@@ -46,6 +47,7 @@
     "happiness": "^7.1.2",
     "lodash.range": "^3.0.1",
     "mocha": "^2.5.3",
-    "request": "^2.60.0"
+    "request": "^2.60.0",
+    "rimraf": "^2.5.3"
   }
 }

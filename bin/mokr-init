@@ -1,14 +1,9 @@
 #! /usr/bin/env node
 
 var app = require('commander');
-var fs = require('fs');
 var Logger = require('../lib/logger');
-var path = require('path');
 var chalk = require('chalk');
-var exec = require('child_process').exec;
-var initPackage = require('init-package-json');
-var mkdirp = require('mkdirp');
-var loadState = require('../lib/load-state');
+var init = require('../lib/commands/init');
 
 app.option('-d --debug', 'Set the log level to debug');
 app.option('-c --chdir <dir>', 'Change the current working directory');
@@ -24,64 +19,57 @@ var logger = Logger(app);
 var cwd = process.cwd();
 logger.debug('cwd: ' + cwd);
 
-// Load the state
-loadState(cwd, function (err, state) {
+init.buildAndRunPrompts(cwd, function (err, answers) {
 	if (err) {
-		// Suppress this error here because the state file shouldnt exist
+		return logger.error(err);
 	}
-
-	fs.exists('./package.json', function (exists) {
-		if (!exists) {
-			logger.notice('No package.json, running npm init');
-			initPackage(cwd, path.resolve(process.env.HOME, '.npm-init'), {}, function (err, data) {
-				if (err) {
-					logger.error(err);
-				}
-				createMokrStuff(state);
-			});
-			return;
-		}
-		createMokrStuff(state);
+	step1(answers, cwd, function () {
+		logger.notice('Mokr is ready to go!');
+		logger.notice('Now run `mokr create <name>` to strea a fixture.');
 	});
 });
 
-function createMokrStuff (state) {
-	logger.notice('Installing faker');
-	exec('npm install --save faker', {
-		cwd: cwd
-	}, function (err, stdout, stderr) {
-		if (err) {
-			logger.notice(stdout);
-			logger.error(err);
-		}
-
-		logger.notice(chalk.white('Creating ./mokr'));
-		mkdirp('./mokr', function (err) {
+function step1 (answers, cwd, done) {
+	// If we need to npm init, do it before the rest
+	if (answers.npmInit) {
+		logger.notice('No package.json, running npm init');
+		return init.npmInit(cwd, function (err) {
 			if (err) {
-				return logger.error(err);
+				return done(err);
 			}
 
-			logger.notice(chalk.white('Creating ./mokr/data'));
-			mkdirp('./mokr/data', function (err) {
-				if (err) {
-					return logger.error(err);
-				}
-
-				logger.notice(chalk.white('Creating ./mokr/fixtures'));
-				mkdirp('./mokr/fixtures', function (err) {
-					if (err) {
-						return logger.error(err);
-					}
-					// Save state
-					state.save(function (err) {
-						if (err) {
-							return logger.error(err);
-						}
-						logger.notice('Mokr is ready to go!');
-						logger.notice('Now run `mokr create <name>` to strea a fixture.');
-					});
-				});
-			});
+			step2(answers, cwd, done);
 		});
+	}
+
+	step2(answers, cwd, done);
+}
+
+function step2 (answers, cwd, done) {
+	// No init, but faker
+	if (answers.installFaker) {
+		return init.installFaker(cwd, function (err) {
+			if (err) {
+				return done(err);
+			}
+
+			logger.notice('Installed faker');
+			step3(answers, cwd, done);
+		});
+	}
+
+	step3(answers, cwd, done);
+}
+
+function step3 (answers, cwd, done) {
+	// Neither init or faker
+	init.createMokrStuff(cwd, function (err) {
+		if (err) {
+			return done(err);
+		}
+		logger.notice(chalk.white('Created ./mokr/fixtures'));
+		logger.notice(chalk.white('Created ./mokr/data'));
+		logger.notice(chalk.white('Created ./mokr/.mokr'));
+		done();
 	});
 }

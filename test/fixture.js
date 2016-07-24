@@ -1,12 +1,16 @@
 /* global describe, it, before, after */
 var assert = require('assert');
 var path = require('path');
+var paths = require('../lib/paths');
 var Fixture = require('../lib/fixture');
+var loadFixture = require('../lib/load-fixture');
 
 describe('fixture', function () {
 	var cwd = process.cwd();
 	before(function () {
-		process.chdir(path.join(__dirname, 'fixtures'));
+		var p = path.join(__dirname, 'fixtures');
+		paths(p);
+		process.chdir(p);
 	});
 	after(function () {
 		process.chdir(cwd);
@@ -22,14 +26,14 @@ describe('fixture', function () {
 
 	it('should load a fixture', function () {
 		var f = new Fixture('foo');
-		f.load();
+		loadFixture(f);
 		assert.equal(typeof f.up, 'function');
 		assert.equal(typeof f.down, 'function');
 	});
 
 	it('should load a fixtures dependencies', function () {
 		var f = new Fixture('bar');
-		f.load();
+		loadFixture(f);
 		assert.equal(f.dependsOn[0], 'foo');
 	});
 

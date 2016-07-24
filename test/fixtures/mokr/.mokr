@@ -1,1 +1,1 @@
-{"fixtures":{"bar":{"name":"bar","hasRun":false,"state":{}},"foo":{"name":"foo","hasRun":false,"state":{}}},"path":"/Users/wes/Projects/mokr/test/fixtures/mokr/.mokr"}
+{"version":1,"fixtures":{"bar":{"name":"bar","hasRun":false,"state":{}},"foo":{"name":"foo","hasRun":false,"state":{}},"baz":{"name":"baz","hasRun":false,"state":{}}}}

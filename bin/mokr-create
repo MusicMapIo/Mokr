@@ -1,10 +1,11 @@
 #! /usr/bin/env node
 
 var app = require('commander');
-var fs = require('fs');
 var Logger = require('../lib/logger');
-var path = require('path');
-var chalk = require('chalk');
+var paths = require('../lib/paths');
+var create = require('../lib/commands/create');
+var State = require('../lib/state');
+var saveState = require('../lib/save-state');
 var loadState = require('../lib/load-state');
 
 app.option('-d --debug', 'Set the log level to debug');
@@ -21,6 +22,8 @@ var logger = Logger(app);
 var cwd = process.cwd();
 logger.debug('cwd: ' + cwd);
 
+var mokrPaths = paths(cwd);
+
 var name;
 if (app.args.length === 1) {
 	name = app.args[0];
@@ -29,53 +32,31 @@ if (app.args.length === 1) {
 	process.exit(1);
 }
 
-var fixtureTmpl = [
-	'var data = require(\'../data/' + name + '\');',
-	'',
-	'module.exports.up = function (next) {',
-	'	next();',
-	'};',
-	'',
-	'module.exports.down = function (next) {',
-	'	next();',
-	'};',
-	''
-].join('\n');
-
-var dataTmpl = [
-	'var faker = require(\'faker\');',
-	'',
-	'module.exports = [',
-	'	',
-	'];',
-	''
-].join('\n');
-
-// Load the state
-loadState(cwd, function (err, state) {
+create.createFixtureFile(cwd, name, function (err, fixturePath) {
 	if (err) {
-		// Suppress this error here because the state file shouldnt exist
+		logger.error(err);
 	}
 
-	var fixturePath = path.join('mokr', 'fixtures', name + '.js');
-	logger.notice('Writing fixture ' + fixturePath);
-	if (!fs.existsSync(fixturePath)) {
-		fs.writeFileSync(fixturePath, fixtureTmpl);
-	} else {
-		logger.notice('Fixture ' + fixturePath + ' already exists');
-	}
+	logger.notice('Wrote fixture ' + fixturePath);
+	create.createDataFile(cwd, name, function (err, dataPath) {
+		if (err) {
+			logger.error(err);
+		}
 
-	var dataPath = path.join('mokr', 'data', name + '.js');
-	logger.notice('Writing data ' + dataPath);
-	if (!fs.existsSync(dataPath)) {
-		fs.writeFileSync(dataPath, dataTmpl);
-	} else {
-		logger.notice('Data ' + dataPath + ' already exists');
-	}
+		logger.notice('Wrote data file ' + dataPath);
 
-	// Resave the state
-	state.add(name);
-	state.save();
-
-	logger.notice('Fixture is ready to run: mokr up ' + name);
+		// Update the state file with the new fixture
+		var state = new State();
+		loadState(state, mokrPaths.stateFile, function (err) {
+			if (err) {
+				return logger.error(err);
+			}
+			saveState(state, mokrPaths.stateFile, function (err) {
+				if (err) {
+					return logger.error(err);
+				}
+				logger.notice('Fixture is ready to run: mokr up ' + name);
+			});
+		});
+	});
 });

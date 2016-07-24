@@ -1,1 +1,3 @@
 node_modules
+test/fixtures/tmp
+text/fixtures/node_modules

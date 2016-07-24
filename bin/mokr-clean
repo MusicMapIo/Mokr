@@ -3,9 +3,10 @@
 var app = require('commander');
 var fs = require('fs');
 var Logger = require('../lib/logger');
-var path = require('path');
-var chalk = require('chalk');
+var paths = require('../lib/paths');
 var State = require('../lib/state');
+var saveState = require('../lib/save-state');
+var readFixtures = require('../lib/read-fixtures');
 
 app.option('-d --debug', 'Set the log level to debug');
 app.option('-c --chdir <dir>', 'Change the current working directory');
@@ -21,18 +22,26 @@ var logger = Logger(app);
 var cwd = process.cwd();
 logger.debug('cwd: ' + cwd);
 
-var stateFile = path.join(cwd, 'mokr', '.mokr');
-logger.debug('state file: ' + stateFile);
-var state = new State(stateFile);
+var mokrPaths = paths(cwd);
 
-fs.unlink(stateFile, function (err) {
+logger.debug('state file: ' + mokrPaths.stateFile);
+
+fs.unlink(mokrPaths.stateFile, function (err) {
 	if (err) {
 		return logger.error(err);
 	}
-	state.save(function (err) {
+
+	var state = new State();
+	readFixtures(state, function (err) {
 		if (err) {
 			return logger.error(err);
 		}
-		logger.notice('Mokr status has been cleaned');
+
+		saveState(state, mokrPaths.stateFile, function (err) {
+			if (err) {
+				return logger.error(err);
+			}
+			logger.notice('Mokr status has been cleaned');
+		});
 	});
 });
